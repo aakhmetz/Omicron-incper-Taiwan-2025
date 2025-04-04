@@ -3,7 +3,7 @@
 Supporting material for Akhmetzhanov AR, Cheng HY, Cheng G, Dushoff J. Consolidating estimates of the incubation period for Omicron subvariants from the literature and their comparison to the estimate from Taiwan: systematic review and meta-analysis, September 2024
 
 ## I. Code scripts
-* [First 100 cases.ipynb](https://nbviewer.org/github/aakhmetz/)
+* [First 100 cases.ipynb]([https://nbviewer.org/github/aakhmetz/](https://nbviewer.org/github/aakhmetz/Omicron-incper-Taiwan-2025/blob/main/scripts/Andrei/First%20100%20cases.ipynb))
 
 ## Additional details
 * The folder **data** contains all data used for our analysis.
