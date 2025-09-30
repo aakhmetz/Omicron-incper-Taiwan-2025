@@ -28,14 +28,13 @@ parameters {
     vector<lower = 0, upper = 1>[N] exposure_raw, onset_raw;
     vector<lower = 0>[N_cens] negative_exposureL_cens;
   
-    real logmean_interval_raw, logparam1_Weibull;
+    real logmean_interval, logparam1_Weibull;
 
     simplex[D] weight; // mixing proportions
 }
 
 transformed parameters {
-    real logmean_interval = logmean_interval_raw * sd_prior + mean_prior,
-        logsd_interval;
+    real logsd_interval;
     real<lower = 0> mean_interval = exp(logmean_interval), sd_interval;
 
     vector[D] param1, param2;
@@ -45,6 +44,7 @@ transformed parameters {
         param2[2] = mean_interval / tgamma(1.0 + 1.0 / param1[2]);
         sd_interval = param2[2] * sqrt(tgamma(1.0 + 2.0 / param1[2]) - square(tgamma(1.0 + 1.0 / param1[2])));
         logsd_interval = log(sd_interval);
+        jacobian += log(square(mean_interval) + square(sd_interval)) - logparam1_Weibull - log(sd_interval) + log(abs(digamma(1 + 1. / param1[2]) - digamma(1 + 2. / param1[2])));
 
         // Gamma distribution
         param1[1] = square(mean_interval / sd_interval);
@@ -86,16 +86,14 @@ transformed parameters {
 
 model {
     logsd_interval ~ normal(mean_prior, sd_prior);
-    logmean_interval_raw ~ normal(mean_prior, sd_prior);
-    target += 2 * log(param2[2]) - 2 * logsd_interval - 2 * log(param1[2]) + 
-        log(abs(square(tgamma(1.0 + 1.0 / param1[2])) * digamma(1.0 + 1.0 / param1[2]) - tgamma(1.0 + 2.0 / param1[2]) * digamma(1.0 + 2.0 / param1[2])));
+    logmean_interval ~ normal(mean_prior, sd_prior);
   
     onset_raw ~ beta(1, 1); 
     exposure_raw ~ beta(1, 1);
 
     negative_exposureL_cens ~ exponential(0.1);
 
-    target += log_sum_exp(lps); // truncation
+    target += log_sum_exp(lps);
 }
 
 generated quantities {

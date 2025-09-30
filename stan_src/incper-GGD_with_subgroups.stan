@@ -125,8 +125,9 @@ model {
     logsd_interval ~ normal(mean_prior, sd_prior);
     logmean_interval ~ normal(mean_prior, sd_prior);
     // Jacobian adjustment
-    target += log(2 * sigma / a) + log1p(square(mean_interval / sd_interval)) + log(abs(digamma(q + 2 * sigma / a) - digamma(q + sigma / a)));
-  
+    target += logmean_interval + logsd_interval + logsigma - loga 
+            + log(abs(2 * digamma(q + 2 * sigma / a) - digamma(q + sigma / a)));
+            
     onset_raw ~ beta(1, 1); 
     exposure_raw ~ beta(1, 1);
 
